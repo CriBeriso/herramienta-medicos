@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import ChatMessage, { ChatMessageProps } from './ChatMessage';
 
-const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook-test/51afca52-8a5e-4585-9566-8b4b9416b380';
+const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/6bf2d3f3-a419-417d-9451-b24a1240266b/chat';
 
 const ChatInterface: React.FC = () => {
   const [input, setInput] = useState('');
