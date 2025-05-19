@@ -3,7 +3,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/components/ui/use-toast';
 import ChatMessage, { ChatMessageProps } from './ChatMessage';
+
+const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook-test/51afca52-8a5e-4585-9566-8b4b9416b380';
 
 const ChatInterface: React.FC = () => {
   const [input, setInput] = useState('');
@@ -17,6 +20,7 @@ const ChatInterface: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { toast } = useToast();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -49,24 +53,58 @@ const ChatInterface: React.FC = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
-    
-    // Aquí es donde se integraría con el backend (n8n, supabase, etc.)
-    // Por ahora simulamos una respuesta después de un pequeño delay
-    setTimeout(() => {
+
+    try {
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage.content,
+          timestamp: userMessage.timestamp.toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      // Parse the response from n8n
+      const data = await response.json();
+      
       const botReply: ChatMessageProps = {
         role: 'assistant',
-        content: '¡Gracias por tu mensaje! Esta es una respuesta simulada. En una implementación real, aquí se conectaría con n8n, IA y Supabase para procesar tu solicitud y brindarte una respuesta adecuada.',
+        content: data.response || 'Lo siento, no pude procesar tu solicitud.',
+        timestamp: new Date(),
+      };
+
+      setMessages(prev => [...prev, botReply]);
+    } catch (error) {
+      console.error('Error connecting to n8n webhook:', error);
+      
+      // Add error message to chat
+      const errorMessage: ChatMessageProps = {
+        role: 'assistant',
+        content: 'Lo siento, hubo un problema al conectar con el servicio. Por favor, intenta de nuevo más tarde.',
         timestamp: new Date(),
       };
       
-      setMessages(prev => [...prev, botReply]);
+      setMessages(prev => [...prev, errorMessage]);
+      
+      toast({
+        title: "Error de conexión",
+        description: "No se pudo conectar con el servicio n8n. Verifica que el servidor esté funcionando.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
-
-    // Enfocar el textarea después de enviar
-    setTimeout(() => {
-      textareaRef.current?.focus();
-    }, 0);
+      
+      // Focus the textarea after sending
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 0);
+    }
   };
 
   return (
@@ -101,6 +139,7 @@ const ChatInterface: React.FC = () => {
             placeholder="Escribe un mensaje..."
             className="min-h-[60px] resize-none rounded-lg"
             maxRows={4}
+            disabled={isLoading}
           />
           <Button 
             onClick={handleSend} 
