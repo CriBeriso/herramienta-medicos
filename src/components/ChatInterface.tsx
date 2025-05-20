@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import ChatMessage, { ChatMessageProps } from './ChatMessage';
 
-const N8N_WEBHOOK_URL = 'https://5b5d-81-61-16-9.ngrok-free.app/webhook/6bf2d3f3-a419-417d-9451-b24a1240266b/chat';
+const N8N_WEBHOOK_URL = 'https://797d-81-61-16-9.ngrok-free.app/webhook/6bf2d3f3-a419-417d-9451-b24a1240266b/chat'; // Esta URL combina el webhook de n8n y la url que me proporciona ngrok para acceder a la API de n8n desde el exterior. Es la única forma que he encontrado de poder acceder a la API de n8n desde mi localhost.
 
 const ChatInterface: React.FC = () => {
   const [input, setInput] = useState('');
