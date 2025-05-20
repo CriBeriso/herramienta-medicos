@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import ChatMessage, { ChatMessageProps } from './ChatMessage';
 
-const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/6bf2d3f3-a419-417d-9451-b24a1240266b/chat';
+const N8N_WEBHOOK_URL = 'https://5b5d-81-61-16-9.ngrok-free.app/webhook/6bf2d3f3-a419-417d-9451-b24a1240266b/chat';
 
 const ChatInterface: React.FC = () => {
   const [input, setInput] = useState('');
@@ -75,7 +75,7 @@ const ChatInterface: React.FC = () => {
       
       const botReply: ChatMessageProps = {
         role: 'assistant',
-        content: data.response || 'Lo siento, no pude procesar tu solicitud.',
+        content: data.sumary || data.reply || 'Acción completada' ,
         timestamp: new Date(),
       };
 
@@ -86,7 +86,7 @@ const ChatInterface: React.FC = () => {
       // Add error message to chat
       const errorMessage: ChatMessageProps = {
         role: 'assistant',
-        content: 'Lo siento, hubo un problema al conectar con el servicio. Por favor, intenta de nuevo más tarde.',
+        content: 'La acción no se ha podido llevar a cabo, lo siento',
         timestamp: new Date(),
       };
       
