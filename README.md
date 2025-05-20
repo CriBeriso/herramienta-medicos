@@ -26,3 +26,9 @@ Por lo demás se puede desplegar normal, con npm install para instalar todas las
 ## n8n
 
 Hay una anotación en el n8n y es debido a un nodo set que tuve que poner para poder usar la herramienta desde el front. Si se quisiera usar la herramienta desde el propio n8n, lo que habría que hacer sería quitar ese nodo del flow.
+
+## Base de datos
+
+Esta es la información actual de la base de datos.
+
+![alt text](image.png)
